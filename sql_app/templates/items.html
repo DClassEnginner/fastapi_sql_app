@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Items</h1>
+        <table border="1">
+            <tr>
+                <th>
+                    <label>item.id</label>
+                </th>
+                <th>
+                    <label>item.owner_id</label>
+                </th>
+                <th>
+                    <label>item.title</label>
+                </th>
+                <th>
+                    <label>item.description</label>
+                </th>
+            </tr>
+            {% for item in items %}
+                <tr>
+                    <td>
+                        <label>{{ item.id }}</label>
+                    </td>
+                    <td>
+                        <label>{{ item.owner_id }}</label>
+                    </td>
+                    <td>
+                        <label>{{ item.title }}</label>
+                    </td>
+                    <td>
+                        <label>{{ item.description }}</label>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <br>
+        <h2>post items</h2>
+        <form action="" method="post" id="postItems">
+            <label for="id">user_id</label><input name="id" type="number" value=1>
+            <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
+            <label for="description">items.description</label><input name="description" type="text" placeholder="world">
+            <button type="button" onclick="submitPostItems()">送信</button>
+        </form>
+
+        <script>
+            function submitPostItems(){
+                const form = document.forms.postItems;
+                const j = {
+                    "title": form.elements.title.value,
+                    "description": form.elements.description.value,
+                };
+                
+                const action = "/users/" + form.elements.id.value + "/items/";
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200){
+                        window.location.href = window.location.href;
+                    } else if(this.readyState == 4 && this.status != 200) {
+                        alert('itemを登録できませんでした');
+                    }
+                };
+
+                xhr.open(form.method, action, true);
+                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.send(JSON.stringify(j));
+            }
+        </script>
+    </body>
+</html>

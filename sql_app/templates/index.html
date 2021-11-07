@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Index</h1>
+        <table border="1">
+            <tr>
+                <th>メソッド名</th>
+                <th>パラメータ</th>
+            </tr>
+            <tr>
+                <td>get users</td>
+                <td>
+                    <form action="/users/" method="get">
+                        <label for="skip">skip</label><input name="skip" type="number" value=0>
+                        <label for="limit">limit</label><input name="limit" type="number" value=100>
+                        <button type="submit">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>get user</td>
+                <td>
+                    <form action="/users/" method="get" id="getUser">
+                        <label for="user_id">user_id</label><input name="user_id" type="number" value="1">
+                        <button type="button" onclick="submitGetUser()">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>get items</td>
+                <td>
+                    <form action="/items" method="get">
+                        <label for="skip">skip</label> <input name="skip" type="number" value=0>
+                        <label for="limit">limit</label> <input name="limit" type="number" value=100>
+                        <button type="submit">送信</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+        <script>
+            function submitGetUser(){
+                const form = document.forms.getUser;
+                window.location.href = form.action + form.elements.user_id.value;
+            }
+        </script>
+    </body>
+</html>
