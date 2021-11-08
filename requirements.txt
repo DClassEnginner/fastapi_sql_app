@@ -1,0 +1,7 @@
+fastapi==0.68.1
+gunicorn==20.1.0
+uvicorn==0.15.0
+SQLAlchemy==1.4.23
+psycopg==3.0.1
+psycopg2-binary==2.9.1
+jinja2==3.0.1
