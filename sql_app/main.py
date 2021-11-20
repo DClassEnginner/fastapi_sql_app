@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -11,6 +12,9 @@ from .database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/sql_app/stylesheets", StaticFiles(directory="sql_app/stylesheets"), name="stylesheets")
+app.mount("/sql_app/javascripts", StaticFiles(directory="sql_app/javascripts"), name="javascripts")
 
 templates = Jinja2Templates(directory="sql_app/templates")
 

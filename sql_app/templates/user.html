@@ -1,99 +1,73 @@
-<!DOCTYPE html>
-<html>
-    <head>
-    </head>
-    <body>
-        <h1>UserID:{{ user.id }}</h1>
-        <table border="1">
-            <tr>
-                <th>
-                    <label>user.id</label>
-                </th>
-                <th>
-                    <label>user.email</label>
-                </th>
-                <th>
-                    <label>user.is_active</label>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    {{ user.id }}
-                </td>
-                <td>
-                    <label>{{ user.email }}</label>
-                </td>
-                <td>
-                    <label>
-                        {{ "True" if user.is_active == 1 else "False" }}
-                    </label>
-                </td>
-        </table>
-        <br>
-        <table border="1">
-            <tr>
-                <th>
-                    <label>item.id</label>
-                </th>
-                <th>
-                    <label>item.owner_id</label>
-                </th>
-                <th>
-                    <label>item.title</label>
-                </th>
-                <th>
-                    <label>item.description</label>
-                </th>
-            </tr>
-            {% for item in user.items %}
-                <tr>
-                    <td>
-                        <label>{{ item.id }}</label>
-                    </td>
-                    <td>
-                        <label>{{ item.owner_id }}</label>
-                    </td>
-                    <td>
-                        <label>{{ item.title }}</label>
-                    </td>
-                    <td>
-                        {{ item.description if item.description != None else "" }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <br>
-        <br>
-        <h1>post items</h1>
-        <form action="" method="post" id="postItems">
-            <input name="id" type="hidden" value={{ user.id }}>
-            <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
-            <label for="description">items.description</label><input name="description" type="text" placeholder="world">
-            <button type="button" onclick="submitPostItems()">送信</button>
-        </form>
-        <script>
-            function submitPostItems(){
-                const form = document.forms.postItems;
-                const j = {
-                    "title": form.elements.title.value,
-                    "description": form.elements.description.value,
-                };
+{% extends "application.html" %}
+{% block body %}
 
-                const action = "/users/" + form.elements.id.value + "/items/";
-                var xhr = new XMLHttpRequest();
+<h1>UserID:{{ user.id }}</h1>
+<table>
+    <tr>
+        <th>
+            <label>user.id</label>
+        </th>
+        <th>
+            <label>user.email</label>
+        </th>
+        <th>
+            <label>user.is_active</label>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            {{ user.id }}
+        </td>
+        <td>
+            <label>{{ user.email }}</label>
+        </td>
+        <td>
+            <label>
+                {{ "True" if user.is_active == 1 else "False" }}
+            </label>
+        </td>
+</table>
+<br>
+<table>
+    <tr>
+        <th>
+            <label>item.id</label>
+        </th>
+        <th>
+            <label>item.owner_id</label>
+        </th>
+        <th>
+            <label>item.title</label>
+        </th>
+        <th>
+            <label>item.description</label>
+        </th>
+    </tr>
+    {% for item in user.items %}
+        <tr>
+            <td>
+                <label>{{ item.id }}</label>
+            </td>
+            <td>
+                <label>{{ item.owner_id }}</label>
+            </td>
+            <td>
+                <label>{{ item.title }}</label>
+            </td>
+            <td>
+                {{ item.description if item.description != None else "" }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br>
+<br>
+<h1>post items</h1>
+<form action="" method="post" id="postItems">
+    <input name="id" type="hidden" value={{ user.id }}>
+    <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
+    <label for="description">items.description</label><input name="description" type="text" placeholder="world">
+    <button type="button" onclick="submitPostItems()">送信</button>
+</form>
 
-                xhr.onreadystatechange = function(){
-                    if(this.readyState == 4 && this.status == 200){
-                        window.location.href = window.location.href;
-                    } else if(this.readyState == 4 && this.status != 200) {
-                        alert('itemを登録できませんでした');
-                    }
-                };
-
-                xhr.open(form.method, action, true);
-                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-                xhr.send(JSON.stringify(j));
-            }
-        </script>
-    </body>
-</html>
+{% endblock %}
