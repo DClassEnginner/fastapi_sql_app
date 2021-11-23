@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1>User Index</h1>
+        <table border="1" id="users-table">
+            <tr>
+                <th>
+                    <label>user.id</label>
+                </th>
+                <th>
+                    <label>user.email</label>
+                </th>
+                <th>
+                    <label>user.is_active</label>
+                </th>
+            </tr>
+        </table>
+        <br>
+        <h1>Item Index</h1>
+        <table border="1" id="items-table">
+            <tr>
+                <th>
+                    <label>item.id</label>
+                </th>
+                <th>
+                    <label>item.owner_id</label>
+                </th>
+                <th>
+                    <label>item.title</label>
+                </th>
+                <th>
+                    <label>item.description</label>
+                </th>
+            </tr>
+        </table>
+        <br>
+        <h1>メソッド一覧</h1>
+        <table border="1">
+            <tr>
+                <td>post users</td>
+                <td>
+                    <form action="" method="post" id="postUsers">
+                        <label for="email">users.email</label><input name="email" type="email" placeholder="reimu@example.com">
+                        <label for="password">users.password</label><input name="password" type="password" placeholder="reimu">
+                        <button type="button" onclick="submitPostUsers()">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>post items</td>
+                <td>
+                    <form action="" method="post" id="postItems">
+                        <label for="id">user_id</label><input name="id" type="number" value=1>
+                        <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
+                        <label for="description">items.description</label><input name="description" type="text" placeholder="world">
+                        <button type="button" onclick="submitPostItems()">送信</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+        <script>
+            window.addEventListener('load', function() {
+
+                const params = (new URL(document.location)).searchParams;
+                const skip = params.get('skip');
+                const limit = params.get('limit');
+
+                const url = 'http://localhost:8000/users/?skip=' + skip + '&limit=' + limit;
+
+                fetch(url).then(function(response) {
+                    return response.json();
+                }).then(function(users) {
+
+                    for (const user of users) {
+                        let table = document.getElementById('users-table');
+                        let newRow = table.insertRow();
+
+                        let newCell = newRow.insertCell();
+                        let newText = document.createTextNode(user['id']);
+                        newCell.appendChild(newText);
+
+                        newCell = newRow.insertCell();
+                        newText = document.createTextNode(user['email']);
+                        newCell.appendChild(newText);
+                        
+                        newCell = newRow.insertCell();
+                        newText = user['is_active'] == 1 ? document.createTextNode('True') : document.createTextNode('False');
+                        newCell.appendChild(newText);
+
+                        table = document.getElementById('items-table');
+
+                        for (const items of user['items']) {
+                            let newRow = table.insertRow();
+
+                            let newCell = newRow.insertCell();
+                            let newText = document.createTextNode(items['id']);
+                            newCell.appendChild(newText);
+
+                            newCell = newRow.insertCell();
+                            newText = document.createTextNode(items['owner_id']);
+                            newCell.appendChild(newText);
+
+                            newCell = newRow.insertCell();
+                            newText = document.createTextNode(items['title']);
+                            newCell.appendChild(newText);
+
+                            newCell = newRow.insertCell();
+                            newText = items['description'] != null ? document.createTextNode(items['description']) : '';
+                            newCell.appendChild(newText);
+                        }
+                    }
+                });
+            });
+
+            function submitPostUsers(){
+                let form = document.forms['postUsers'];
+                var j = {
+                    "email":form.elements['email'].value,
+                    "password":form.elements['password'].value,
+                };
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200){
+                        window.location.href = window.location.href;
+                    } else if(this.readyState == 4 && this.status != 200) {
+                        alert('userを登録できませんでした');
+                    }
+                }
+
+                const action = 'http://localhost:8000/users/'
+                xhr.open(form.method, action, true);
+                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.send(JSON.stringify(j));
+            }
+
+            function submitPostItems(){
+                let form = document.forms['postItems'];
+                var j = {
+                    "title":form.elements['title'].value,
+                    "description":form.elements['description'].value,
+                };
+
+                let action = "http://localhost:8000/users/" + form.elements['id'].value + "/items/"
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200){
+                        window.location.href = window.location.href;
+                    } else if(this.readyState == 4 && this.status != 200) {
+                        alert('itemを登録できませんでした');
+                    }
+                }
+
+                xhr.open(form.method, action, true);
+                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.send(JSON.stringify(j));
+            }
+        </script>
+    </body>
+</html>
