@@ -60,7 +60,7 @@
                         newCell.appendChild(newText);
 
                         newCell = newRow.insertCell();
-                        newText = data['description'] != null ? document.createTextNode(data['description']) : '';
+                        newText = document.createTextNode(data['description'] != null ? data['description'] : '');
                         newCell.appendChild(newText);
                     }
                 });

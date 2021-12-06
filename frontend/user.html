@@ -72,7 +72,7 @@
                     newCell.appendChild(newText);
                     
                     newCell = newRow.insertCell();
-                    newText = user['is_active'] == 1 ? document.createTextNode('True') : document.createTextNode('False');
+                    newText = document.createTextNode(user['is_active'] == 1 ? 'True' : 'False');
                     newCell.appendChild(newText);
 
                     table = document.getElementById('items-table');
@@ -94,7 +94,7 @@
                         newCell.appendChild(newText);
 
                         newCell = newRow.insertCell();
-                        newText = items['description'] != null ? document.createTextNode(items['description']) : '';
+                        newText = document.createTextNode(items['description'] != null ? items['description'] : '');
                         newCell.appendChild(newText);
                     }
                 });
