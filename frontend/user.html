@@ -16,6 +16,9 @@
                 <th>
                     <label>user.is_active</label>
                 </th>
+                <th>
+                    <label>user.is_admin</label>
+                </th>
             </tr>
         </table>
         <br>
@@ -37,13 +40,32 @@
         </table>
         <br>
         <br>
-        <h1>post items</h1>
-        <form action="" method="post" id="postItems">
-            <input name="id" type="hidden">
-            <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
-            <label for="description">items.description</label><input name="description" type="text" placeholder="world">
-            <button type="button" onclick="submitPostItems()">送信</button>
-        </form>
+        <table border="1">
+            <tr>
+                <th>メソッド名</th>
+                <th>パラメータ</th>
+            </tr>
+            <tr>
+                <td>post items</td>
+                <td>
+                    <form action="" method="post" id="postItems">
+                        <input name="id" type="hidden">
+                        <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
+                        <label for="description">items.description</label><input name="description" type="text" placeholder="world">
+                        <button type="button" onclick="submitPostItems()">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>logout</td>
+                <td>
+                    <form>
+                        <button type="button" onclick="logout()">送信</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        
         <script>
             window.addEventListener('load', function() {
 
@@ -52,7 +74,11 @@
 
                 const url = 'http://localhost:8000/users/' + user_id;
 
-                fetch(url).then(function(response) {
+                fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                }).then(function(response) {
                     return response.json();
                 }).then(function(user) {
 
@@ -73,6 +99,10 @@
                     
                     newCell = newRow.insertCell();
                     newText = document.createTextNode(user['is_active'] == 1 ? 'True' : 'False');
+                    newCell.appendChild(newText);
+
+                    newCell = newRow.insertCell();
+                    newText = document.createTextNode(user['is_admin'] == 1 ? 'True' : 'False');
                     newCell.appendChild(newText);
 
                     table = document.getElementById('items-table');
@@ -120,7 +150,13 @@
 
                 xhr.open(form.method, action, true);
                 xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
                 xhr.send(JSON.stringify(j));
+            }
+
+            function logout() {
+                localStorage.removeItem('token');
+                window.location.href = 'index.html';
             }
         </script>
     </body>

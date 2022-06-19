@@ -37,3 +37,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     userid: Union[int, None] = None
+
+class UserToken(Token):
+    id: int
+    is_admin: bool = False

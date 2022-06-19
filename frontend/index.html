@@ -4,41 +4,119 @@
         <meta charset="utf-8"/>
     </head>
     <body>
-        <h1>Index</h1>
+        <h1>メソッド一覧</h1>
         <table border="1">
             <tr>
                 <th>メソッド名</th>
                 <th>パラメータ</th>
             </tr>
             <tr>
-                <td>get users</td>
+                <td>ログイン</td>
                 <td>
-                    <form action="/users.html" method="get">
-                        <labelfor="skip">skip</label><input name="skip" type="text" value="0">
-                        <labelfor="limit">limit</label><input name="limit" type="text" value="100">
-                        <button type="submit">送信</button>
+                    <form action="" method="post" id="loginForm">
+                        <label for="email">users.email</label><input name="email" type="email" placeholder="reimu@example.com">
+                        <label for="password">users.password</label><input name="password" type="password" placeholder="reimu">
+                        <button type="button" onclick="submitLogin()">ログイン</button>
                     </form>
                 </td>
             </tr>
             <tr>
-                <td>get user</td>
+                <td>新規作成</td>
                 <td>
-                    <form action="/user.html" method="get" id="getUser">
-                        <label for="user_id">user_id</label><input name="user_id" type="number" value="1">
-                        <button type="submit">送信</button>
-                    </form>
-                </td>
-            </tr>
-            <tr>
-                <td>get items</td>
-                <td>
-                    <form action="/items.html" method="get">
-                        <labelfor="skip">skip</label> <input name="skip" type="text" value="0">
-                        <labelfor="limit">limit</label> <input name="limit" type="text" value="100">
-                        <button type="submit">送信</button>
+                    <form action="" method="post" id="postUsers">
+                        <label for="email">users.email</label><input name="email" type="email" placeholder="reimu@example.com">
+                        <label for="password">users.password</label><input name="password" type="password" placeholder="reimu">
+                        <button type="button" onclick="submitPostUsers()">新規作成</button>
                     </form>
                 </td>
             </tr>
         </table>
+
+
+        <script>
+            window.addEventListener('load', function() {
+
+                token = localStorage.getItem('token')
+                if (token != null) {
+                    const url = 'http://localhost:8000/me/';
+
+                    fetch(url, {
+                        headers: {
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        }
+                    }).then(function(response) {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            return null;
+                        }
+                    }).then(function(user) {
+                        if (user != null) {
+                            if (user['is_admin']) {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = 'user.html?user_id=' + user['id'];
+                            }
+                        }
+                    });
+                }
+            });
+
+            function submitLogin() {
+                const form = document.forms['loginForm'];
+                login(form.elements['email'].value, form.elements['password'].value);
+            }
+
+            function submitPostUsers(){
+                let form = document.forms['postUsers'];
+                var j = {
+                    "email":form.elements['email'].value,
+                    "password":form.elements['password'].value,
+                };
+
+                var xhr = new XMLHttpRequest();
+
+                const action = 'http://localhost:8000/users/'
+                xhr.open(form.method, action, false);
+                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xhr.send(JSON.stringify(j));
+
+                if (xhr.status === 200) {
+                    login(
+                        form.elements['email'].value,
+                        form.elements['password'].value
+                    );
+                } else {
+                    alert('userを登録できませんでした');
+                }
+            }
+
+            function login(username, password) {
+                var params = new URLSearchParams();
+                params.append('username', username);
+                params.append('password', password);
+
+                const action = "http://localhost:8000/token/";
+                var xhr = new XMLHttpRequest();
+
+                xhr.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200){
+                        const res = JSON.parse(this.responseText);
+                        localStorage.setItem('token', res['access_token']);
+                        if (res['is_admin']) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'user.html?user_id=' + res['id'];
+                        }
+                    } else if(this.readyState == 4 && this.status != 200) {
+                        alert('ログインできませんでした');
+                    }
+                };
+
+                xhr.open("post", action, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                xhr.send(params);
+            }
+        </script>
     </body>
 </html>

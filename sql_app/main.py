@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/token", response_model=schemas.Token)
+@app.post("/token", response_model=schemas.UserToken)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -40,7 +40,13 @@ async def login_for_access_token(
     access_token = security.create_access_token(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    user_token = schemas.UserToken(
+        access_token=access_token,
+        token_type="bearer",
+        id=user.id,
+        is_admin=user.is_admin
+    )
+    return user_token
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -72,6 +78,14 @@ def read_user(
     if db_user != current_user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You do not have permission to access")
     return db_user
+
+@app.get("/me/", response_model=schemas.User)
+def read_user(
+    current_user: schemas.User = Depends(security.get_current_active_user)
+):
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return current_user
 
 @app.post("/users/{user_id}/items", response_model=schemas.Item)
 def create_item_for_user(

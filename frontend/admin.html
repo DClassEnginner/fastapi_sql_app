@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1>Admin</h1>
+        <table border="1">
+            <tr>
+                <th>メソッド名</th>
+                <th>パラメータ</th>
+            </tr>
+            <tr>
+                <td>get users</td>
+                <td>
+                    <form action="/users.html" method="get">
+                        <labelfor="skip">skip</label><input name="skip" type="text" value="0">
+                        <labelfor="limit">limit</label><input name="limit" type="text" value="100">
+                        <button type="submit">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>get user</td>
+                <td>
+                    <form action="/user.html" method="get" id="getUser">
+                        <input name="user_id" type="hidden">
+                        <button type="submit">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>get items</td>
+                <td>
+                    <form action="/items.html" method="get">
+                        <labelfor="skip">skip</label> <input name="skip" type="text" value="0">
+                        <labelfor="limit">limit</label> <input name="limit" type="text" value="100">
+                        <button type="submit">送信</button>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td>logout</td>
+                <td>
+                    <form>
+                        <button type="button" onclick="logout()">送信</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <script>
+            window.addEventListener('load', function() {
+
+                const url = 'http://localhost:8000/me/';
+
+                fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                }).then(function(response) {
+                    return response.json();
+                }).then(function(user) {
+
+                    document.forms['getUser'].elements['user_id'].value = user['id'];
+                });
+            });
+
+            function logout() {
+                localStorage.removeItem('token');
+                window.location.href = 'index.html';
+            }
+        </script>
+    </body>
+</html>

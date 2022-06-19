@@ -21,15 +21,6 @@
                 </th>
             </tr>
         </table>
-        <br>
-        <br>
-        <h1>post items</h1>
-        <form action="" method="post" id="postItems">
-            <label for="id">user_id</label><input name="id" type="number" value=1>
-            <label for="title">items.title</label><input name="title" type="text" placeholder="hello">
-            <label for="description">items.description</label><input name="description" type="text" placeholder="world">
-            <button type="button" onclick="submitPostItems()">送信</button>
-        </form>
 
         <script>
             window.addEventListener('load', function() {
@@ -39,7 +30,11 @@
 
                 const url = 'http://localhost:8000/items/?skip=' + skip + '&limit=' + limit;
 
-                fetch(url).then(function(response) {
+                fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                }).then(function(response) {
                     return response.json();
                 }).then(function(datas) {
                     let table = document.getElementById('item-table');
@@ -65,29 +60,6 @@
                     }
                 });
             });
-
-            function submitPostItems(){
-                let form = document.forms['postItems'];
-                var j = {
-                    "title":form.elements['title'].value,
-                    "description":form.elements['description'].value,
-                };
-
-                let action = "http://localhost:8000/users/" + form.elements['id'].value + "/items/"
-                var xhr = new XMLHttpRequest();
-
-                xhr.onreadystatechange = function(){
-                    if(this.readyState == 4 && this.status == 200){
-                        window.location.href = window.location.href;
-                    } else if(this.readyState == 4 && this.status != 200) {
-                        alert('itemを登録できませんでした');
-                    }
-                }
-
-                xhr.open(form.method, action, true);
-                xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-                xhr.send(JSON.stringify(j));
-            }
         </script>
     </body>
 </html>
