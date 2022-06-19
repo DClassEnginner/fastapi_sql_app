@@ -59,7 +59,6 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
     except JWTError:
         raise credentials_exception
     user = crud.get_user(db, user_id=token_data.userid)
-    print("user" + str(user))
     if user is None:
         raise credentials_exception
     return user
